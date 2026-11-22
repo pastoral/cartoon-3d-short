@@ -10,6 +10,7 @@ Proven on **The Bridge That Fell for a Song**, a 67 s short about the 1831 Broug
 | Path | What it is |
 |---|---|
 | `SKILL.md` | The skill: the full pipeline, every rule, every fix, and the final look values |
+| `docs/WORKFLOW.md` | Step-by-step workflow, idea to final render ([PDF](docs/WORKFLOW.pdf)) |
 | `templates/bridge/` | The full source of the bridge short: world, characters, ink, lens blur, grade, story/camera |
 | `templates/audio/` | The synthesized sound: SFX, march music, the mix with ducking and loudness |
 | `templates/scripts/` | Stills, side-by-side sheets, shot merge and frame-by-frame QA helpers |
