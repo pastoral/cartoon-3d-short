@@ -1,0 +1,7 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#222}#world3d-host{position:relative;width:540px;height:960px}</style></head>
+<body><div id="world3d-host" data-scale="0.5"></div>
+<script>document.write('<script src="../assets/js/world.js?v=' + Date.now() + '"><\/script>');</script>
+<script>
+const q = new URLSearchParams(location.search);
+window.__hf.buildReady.world3d.then(() => { window.__pirates.renderAt(Number(q.get("t") || 0)); document.title = "ready"; });
+</script></body></html>

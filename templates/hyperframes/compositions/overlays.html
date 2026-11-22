@@ -1,0 +1,132 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; }
+    #root svg { position: absolute; overflow: visible; }
+    /* thought bubble: final 660 x 450 px centred (540, 330) (measured f235) */
+    #ov-bubble { left: 210px; top: 105px; width: 660px; height: 450px; }
+    #ov-dot1 { left: 268px; top: 586px; width: 48px; height: 48px; }
+    #ov-dot2 { left: 228px; top: 650px; width: 30px; height: 30px; }
+    /* lock over the liner, reticle over the container ship (positions follow our layout of set C) */
+    /* lock body centre measured at (449, 505) on f300, moving with the camera truck to (757, 465) by f360;
+       reticle centre (425, 995) at f345 -> (460, 1010) at f360. Positions are animated on the inner movers. */
+    #ov-lockmove, #ov-retmove { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    #ov-lock { left: 355px; top: 338px; width: 188px; height: 236px; }
+    #ov-sparks { left: 295px; top: 228px; width: 300px; height: 140px; }
+    #ov-reticle { left: 125px; top: 695px; width: 600px; height: 600px; }
+  </style>
+  <div id="root" data-composition-id="overlays" data-width="1080" data-height="1920" data-layout-allow-overlap data-layout-allow-overflow>
+    <!-- thought bubble (f227 - f256) -->
+    <div id="ov-think" class="clip" data-start="7.533333" data-duration="0.966667" data-track-index="1">
+      <svg id="ov-dot1" viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="#fff" stroke="#000" stroke-width="6"/></svg>
+      <svg id="ov-dot2" viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#fff" stroke="#000" stroke-width="5"/></svg>
+      <svg id="ov-bubble" viewBox="0 0 660 450">
+        <path id="ov-cloud" fill="#f1f1ef" stroke="#000" stroke-width="7" stroke-linejoin="round" d=""/>
+        <!-- treasure chest -->
+        <g transform="translate(190 120)">
+          <g fill="#f3c21b" stroke="#000" stroke-width="5">
+            <ellipse cx="38" cy="38" rx="26" ry="14"/><ellipse cx="90" cy="30" rx="26" ry="14"/><ellipse cx="142" cy="30" rx="26" ry="14"/>
+            <ellipse cx="194" cy="36" rx="26" ry="14"/><ellipse cx="240" cy="44" rx="24" ry="13"/><ellipse cx="64" cy="18" rx="24" ry="13"/>
+            <ellipse cx="118" cy="12" rx="24" ry="13"/><ellipse cx="170" cy="14" rx="24" ry="13"/><ellipse cx="216" cy="22" rx="22" ry="12"/>
+          </g>
+          <rect x="6" y="50" width="268" height="150" rx="10" fill="#b8641e" stroke="#000" stroke-width="8"/>
+          <rect x="6" y="50" width="268" height="44" rx="8" fill="#a5561a" stroke="#000" stroke-width="7"/>
+          <g fill="#e3a414" stroke="#000" stroke-width="5">
+            <rect x="40" y="50" width="22" height="150"/><rect x="218" y="50" width="22" height="150"/><rect x="118" y="80" width="44" height="40" rx="4"/>
+          </g>
+          <g stroke="#6a3410" stroke-width="4" opacity="0.6"><line x1="70" y1="130" x2="210" y2="130"/><line x1="70" y1="165" x2="210" y2="165"/></g>
+        </g>
+        <!-- green dollar sign -->
+        <text x="505" y="132" font-family="Montserrat, sans-serif" font-weight="800" font-size="92" fill="#1aa94a" stroke="#000" stroke-width="6" paint-order="stroke fill">$</text>
+        <!-- sparkle glint (bloom-like soft core measured on the reference: core r~24, halo to ~120 px) -->
+        <g id="ov-glint" transform="translate(640 400)">
+          <circle r="70" fill="url(#ov-glow)"/>
+          <path d="M0 -92 C6 -12 12 -6 92 0 C12 6 6 12 0 92 C-6 12 -12 6 -92 0 C-12 -6 -6 -12 0 -92 Z" fill="#fffdf4"/>
+        </g>
+        <defs><radialGradient id="ov-glow"><stop offset="0" stop-color="#fff6e6" stop-opacity="1"/><stop offset="0.35" stop-color="#ffe2b8" stop-opacity="0.7"/><stop offset="1" stop-color="#ffd09a" stop-opacity="0"/></radialGradient></defs>
+      </svg>
+    </div>
+    <!-- padlock over the cruise liner (f293 - end) -->
+    <div id="ov-lockwrap" class="clip" data-start="9.733333" data-duration="2.266667" data-track-index="2">
+      <div id="ov-lockmove">
+      <svg id="ov-lock" viewBox="0 0 188 236">
+        <path d="M44 112 V70 a50 50 0 0 1 100 0 V112" fill="none" stroke="#000" stroke-width="29" stroke-linecap="round"/>
+        <path d="M44 112 V70 a50 50 0 0 1 100 0 V112" fill="none" stroke="#c9ccd4" stroke-width="20" stroke-linecap="round"/>
+        <path d="M56 104 V72 a38 38 0 0 1 76 0" fill="none" stroke="#ffffff" stroke-width="5" opacity="0.7"/>
+        <rect x="6" y="104" width="176" height="126" rx="16" fill="#f4c21a" stroke="#000" stroke-width="5"/>
+        <rect x="14" y="112" width="160" height="22" rx="8" fill="#ffd95a"/>
+        <circle cx="94" cy="160" r="17" fill="#2a1f10"/><path d="M86 168 L102 168 L98 198 L90 198 Z" fill="#2a1f10"/>
+      </svg>
+      <svg id="ov-sparks" viewBox="0 0 300 140">
+        <g fill="#ffffff">
+          <path id="ov-sp1" d="M60 70 l5 -16 l5 16 l16 5 l-16 5 l-5 16 l-5 -16 l-16 -5 Z"/>
+          <path id="ov-sp2" d="M150 26 l4 -12 l4 12 l12 4 l-12 4 l-4 12 l-4 -12 l-12 -4 Z"/>
+          <path id="ov-sp3" d="M240 80 l4 -13 l4 13 l13 4 l-13 4 l-4 13 l-4 -13 l-13 -4 Z"/>
+        </g>
+      </svg>
+      </div>
+    </div>
+    <!-- target reticle on the cargo ship (f338 - end) -->
+    <div id="ov-retwrap" class="clip" data-start="11.233333" data-duration="0.766667" data-track-index="3">
+      <div id="ov-retmove">
+      <svg id="ov-reticle" viewBox="-300 -300 600 600">
+        <g id="ov-ret">
+          <g fill="none" stroke="#000" stroke-width="40" stroke-linecap="butt">
+            <path d="M 0 -250 A 250 250 0 0 1 177 -177"/><path d="M 250 0 A 250 250 0 0 1 177 177"/>
+            <path d="M 0 250 A 250 250 0 0 1 -177 177"/><path d="M -250 0 A 250 250 0 0 1 -177 -177"/>
+          </g>
+          <g fill="none" stroke="#e8302c" stroke-width="28">
+            <path d="M 0 -250 A 250 250 0 0 1 177 -177"/><path d="M 250 0 A 250 250 0 0 1 177 177"/>
+            <path d="M 0 250 A 250 250 0 0 1 -177 177"/><path d="M -250 0 A 250 250 0 0 1 -177 -177"/>
+          </g>
+          <circle r="140" fill="none" stroke="#000" stroke-width="22"/><circle r="140" fill="none" stroke="#e8302c" stroke-width="12"/>
+          <g stroke="#000" stroke-width="22" stroke-linecap="square"><line x1="0" y1="-205" x2="0" y2="-95"/><line x1="0" y1="95" x2="0" y2="205"/><line x1="-205" y1="0" x2="-95" y2="0"/><line x1="95" y1="0" x2="205" y2="0"/></g>
+          <g stroke="#e8302c" stroke-width="12" stroke-linecap="square"><line x1="0" y1="-200" x2="0" y2="-100"/><line x1="0" y1="100" x2="0" y2="200"/><line x1="-200" y1="0" x2="-100" y2="0"/><line x1="100" y1="0" x2="200" y2="0"/></g>
+        </g>
+      </svg>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      // scalloped cloud outline for the thought bubble (deterministic)
+      const cx = 330, cy = 225, rx = 300, ry = 200, n = 16;
+      let d = "";
+      for (let i = 0; i <= n; i++) {
+        const a0 = (i / n) * Math.PI * 2, a1 = ((i + 1) / n) * Math.PI * 2;
+        const p0 = [cx + rx * Math.cos(a0), cy + ry * Math.sin(a0)], p1 = [cx + rx * Math.cos(a1), cy + ry * Math.sin(a1)];
+        const am = (a0 + a1) / 2, bulge = 1.07 + 0.02 * Math.sin(i * 2.3);
+        const c = [cx + rx * bulge * Math.cos(am), cy + ry * bulge * Math.sin(am)];
+        if (i === 0) d += `M${p0[0].toFixed(1)} ${p0[1].toFixed(1)} `;
+        if (i < n) d += `Q${c[0].toFixed(1)} ${c[1].toFixed(1)} ${p1[0].toFixed(1)} ${p1[1].toFixed(1)} `;
+      }
+      document.getElementById("ov-cloud").setAttribute("d", d + "Z");
+    })();
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    const F = (f) => (f - 1) / 30;            // frame -> seconds (frame 1 = 0 s)
+    // ---- bubble: measured width fractions f227..f237, origin at the lower-left seed; fades with the B->C dissolve
+    const W = [0.09, 0.38, 0.57, 0.74, 0.75, 0.79, 0.86, 0.94, 1.01, 1.01, 1.0];
+    tl.set("#ov-bubble", { transformOrigin: "22% 92%", scale: 0.0 }, 0);
+    tl.fromTo("#ov-dot2", { scale: 0 }, { scale: 1, duration: 2 / 30, ease: "back.out(2)" }, F(227));
+    tl.fromTo("#ov-dot1", { scale: 0 }, { scale: 1, duration: 2 / 30, ease: "back.out(2)" }, F(228));
+    W.forEach((w, i) => tl.set("#ov-bubble", { scale: w }, F(227 + i)));
+    tl.fromTo("#ov-glint", { scale: 0.2, rotation: 0, opacity: 0 }, { scale: 1, rotation: 45, opacity: 1, duration: 0.25, ease: "power2.out" }, F(233));
+    tl.to("#ov-glint", { scale: 0.75, duration: 0.25, ease: "sine.inOut" }, F(241));
+    tl.set("#ov-think", { opacity: 1 }, 0);
+    tl.set("#ov-think", { opacity: 0.63 }, F(246));
+    tl.to("#ov-think", { opacity: 0, duration: 10 / 30, ease: "none" }, F(246));
+    // ---- lock: body width 52, 114, 156, 188 (f296), 176, 172 (f298), then grows 182 -> 194 with the push
+    [52, 114, 156, 188, 176, 172].forEach((w, i) => tl.set("#ov-lock", { transformOrigin: "50% 60%", scale: 1.08 * w / 176 }, F(293 + i)));
+    tl.fromTo("#ov-lock", { scale: 1.08 * 172 / 176 }, { scale: 1.08 * 194 / 176, duration: F(360) - F(298), ease: "none" }, F(298) + 1 / 30);
+    tl.set(["#ov-sp1", "#ov-sp2", "#ov-sp3"], { transformOrigin: "50% 50%", scale: 0 }, 0);
+    tl.to("#ov-sp1", { scale: 1, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out" }, F(301));
+    tl.to("#ov-sp2", { scale: 1, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out" }, F(305));
+    tl.to("#ov-sp3", { scale: 1, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out" }, F(309));
+    // ---- reticle: outer radius 321 -> 214 (f345, -6 % undershoot) -> 228 by f350; ~62 deg spin, eased out
+    const R = [321, 315, 300, 279, 257, 234, 219, 214, 216, 219, 222, 225, 228];
+    R.forEach((r, i) => tl.set("#ov-ret", { transformOrigin: "50% 50%", scale: r / 264, rotation: 45 + 62 * Math.pow(1 - Math.min(i, 8) / 8, 3) }, F(338 + i)));
+    tl.fromTo("#ov-lockmove", { x: -6, y: 2 }, { x: 308, y: -40, duration: F(360) - F(293), ease: "power1.inOut" }, F(293));
+    tl.fromTo("#ov-retmove", { x: 0, y: 0 }, { x: 35, y: 15, duration: F(360) - F(338), ease: "none" }, F(338));
+    window.__timelines["overlays"] = tl;
+  </script>
+</template>

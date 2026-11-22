@@ -31,3 +31,11 @@ Claude then follows `SKILL.md`: topic and facts, then script, then voice, then t
 
 ## License
 The code and docs are MIT (see `LICENSE`). The reference frames are included for style study only.
+
+## Added 2026-11-22: HyperFrames path and remake mode
+- `templates/hyperframes/`: HyperFrames project skeleton (baked 3D video + live captions/overlays/audio).
+- `templates/pirates/`: standalone three.js engine for the HyperFrames path. Not published: it recreates a third-party scene. Start a new world from the `templates/bridge` look modules instead.
+- `templates/remake/`: `fit_layout.py` (camera + layout least-squares solve), `emit_cams.py`, `solve_cam.py`, example keys and results.
+- `templates/scripts/`: + `bake.mjs` (GPU Chrome bake), `stills.sh`, `snap.sh`, `sbs.py`.
+- `references/remake/`: the remake method and the agent briefs.
+- `references/knox_example/`: a worked example (numbers + 10 gridded key frames). Not published: it contains frames from a third-party video.

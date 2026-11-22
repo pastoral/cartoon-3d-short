@@ -1,0 +1,18 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #7fb2e6; }
+    #world3d-video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+  </style>
+  <!-- The three.js layer baked frame-by-frame from engine/ (tools/bake.mjs, GPU Chrome, 2x supersampled).
+       The live, seekable version of the same engine is compositions/world3d-live.html (swap the host's
+       data-composition-src to edit it in the preview; it renders ~40 s/frame headless on this machine). -->
+  <div id="root" data-composition-id="world3d" data-width="1080" data-height="1920">
+    <video id="world3d-video" class="clip" src="assets/world3d.mp4" muted playsinline data-start="0" data-duration="12" data-track-index="0"></video>
+  </div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    tl.set({}, {}, 12);
+    window.__timelines["world3d"] = tl;
+  </script>
+</template>

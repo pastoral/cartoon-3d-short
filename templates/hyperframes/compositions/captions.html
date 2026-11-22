@@ -1,0 +1,48 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; }
+    /* measured: Montserrat ExtraBold, cap height 54 px (font-size ~77 px), baseline y 1376, centred x 540,
+       fill #fafafa, 4-5 px black stroke, soft black shadow +2/+4 px, sigma ~5, ~70 %; hard switches, no animation */
+    #root .cap { position: absolute; left: 0; right: 0; top: 1294px; height: 100px; display: flex; justify-content: center; align-items: flex-end; }
+    #root .cap span { font-family: "Montserrat", sans-serif; font-weight: 800; font-size: 72.5px; line-height: 1; color: #fafafa;
+      -webkit-text-stroke: 9px #000; paint-order: stroke fill; letter-spacing: -0.5px;
+      text-shadow: 0 0 6px rgba(0,0,0,0.95), 2px 4px 6px rgba(0,0,0,0.95), 3px 7px 14px rgba(0,0,0,0.85); padding-bottom: 6px; }
+  </style>
+  <div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+    <div id="cap-00" class="clip cap" data-start="0" data-duration="0.200000" data-track-index="2"><span>Why</span></div>
+    <div id="cap-01" class="clip cap" data-start="0.2" data-duration="0.233333" data-track-index="3"><span>don't</span></div>
+    <div id="cap-02" class="clip cap" data-start="0.433333" data-duration="0.466667" data-track-index="2"><span>pirates</span></div>
+    <div id="cap-03" class="clip cap" data-start="0.9" data-duration="0.333333" data-track-index="3"><span>attack</span></div>
+    <div id="cap-04" class="clip cap" data-start="1.233333" data-duration="0.266667" data-track-index="2"><span>cruise</span></div>
+    <div id="cap-05" class="clip cap" data-start="1.5" data-duration="0.700000" data-track-index="3"><span>ships?</span></div>
+    <div id="cap-06" class="clip cap" data-start="2.2" data-duration="1.200000" data-track-index="2"><span>In 2005,</span></div>
+    <div id="cap-07" class="clip cap" data-start="3.4" data-duration="0.366667" data-track-index="3"><span>Somali</span></div>
+    <div id="cap-08" class="clip cap" data-start="3.766666" data-duration="0.433333" data-track-index="2"><span>pirates</span></div>
+    <div id="cap-09" class="clip cap" data-start="4.2" data-duration="0.366667" data-track-index="3"><span>attacked</span></div>
+    <div id="cap-10" class="clip cap" data-start="4.566666" data-duration="0.333333" data-track-index="2"><span>a cruise</span></div>
+    <div id="cap-11" class="clip cap" data-start="4.9" data-duration="0.200000" data-track-index="3"><span>ship</span></div>
+    <div id="cap-12" class="clip cap" data-start="5.1" data-duration="0.300000" data-track-index="2"><span>called</span></div>
+    <div id="cap-13" class="clip cap" data-start="5.4" data-duration="0.566667" data-track-index="3"><span>the Seabourn</span></div>
+    <div id="cap-14" class="clip cap" data-start="5.966666" data-duration="0.700000" data-track-index="2"><span>Spirit,</span></div>
+    <div id="cap-15" class="clip cap" data-start="6.666666" data-duration="0.433333" data-track-index="3"><span>expecting</span></div>
+    <div id="cap-16" class="clip cap" data-start="7.1" data-duration="0.466667" data-track-index="2"><span>an easy</span></div>
+    <div id="cap-17" class="clip cap" data-start="7.566666" data-duration="0.700000" data-track-index="3"><span>ransom.</span></div>
+    <div id="cap-18" class="clip cap" data-start="8.266666" data-duration="0.400000" data-track-index="2"><span>But cruise</span></div>
+    <div id="cap-19" class="clip cap" data-start="8.666666" data-duration="0.300000" data-track-index="3"><span>ships</span></div>
+    <div id="cap-20" class="clip cap" data-start="8.966666" data-duration="0.133333" data-track-index="2"><span>are</span></div>
+    <div id="cap-21" class="clip cap" data-start="9.1" data-duration="0.366667" data-track-index="3"><span>actually</span></div>
+    <div id="cap-22" class="clip cap" data-start="9.466666" data-duration="0.300000" data-track-index="2"><span>much</span></div>
+    <div id="cap-23" class="clip cap" data-start="9.766666" data-duration="0.366667" data-track-index="3"><span>harder</span></div>
+    <div id="cap-24" class="clip cap" data-start="10.133333" data-duration="0.133333" data-track-index="2"><span>to</span></div>
+    <div id="cap-25" class="clip cap" data-start="10.266666" data-duration="0.400000" data-track-index="3"><span>attack</span></div>
+    <div id="cap-26" class="clip cap" data-start="10.666666" data-duration="0.566667" data-track-index="2"><span>than ordinary</span></div>
+    <div id="cap-27" class="clip cap" data-start="11.233333" data-duration="0.366667" data-track-index="3"><span>cargo</span></div>
+    <div id="cap-28" class="clip cap" data-start="11.6" data-duration="0.400000" data-track-index="2"><span>ships.</span></div>
+  </div>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    tl.set({}, {}, 12);
+    window.__timelines["captions"] = tl;
+  </script>
+</template>

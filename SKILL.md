@@ -1,6 +1,6 @@
 ---
 name: cartoon-3d-short
-description: Make a ~55-70 s vertical cartoon story short in the "2D characters in a colourful 3D world" style (flat bean-head cartoon cards with ink outlines, painted 3D town/world with black ink lines, saturated sky, depth-of-field backgrounds, gliding cameras, voice narration, synthesized SFX + march-style music), rendered with three.js inside Remotion. Proven on "The Bridge That Fell for a Song" (2026-10-31). Use when the user asks for another video "like the bridge video", "like the soldiers/bridge short", "in that cartoon 3D style", a history/science story short with cartoon characters in 3D, or says "use the cartoon short skill".
+description: Make a ~55-70 s vertical cartoon story short in the "2D characters in a colourful 3D world" style (flat bean-head cartoon cards with ink outlines, painted 3D town/world with black ink lines, saturated sky, depth-of-field backgrounds, gliding cameras, voice narration, synthesized SFX + march-style music), rendered with three.js inside Remotion (default) or HyperFrames (baked with GPU Chrome). Proven on "The Bridge That Fell for a Song" (2026-10-31) and on a licensed shot-for-shot remake, the pirates-vs-cruise opening (2026-11-22). Use when the user asks for another video "like the bridge video", "like the soldiers/bridge short", "in that cartoon 3D style", a history/science story short with cartoon characters in 3D, a HyperFrames version of this style, to remake or recreate an existing cartoon clip in this style (with the owner's permission), or says "use the cartoon short skill".
 ---
 
 # Cartoon 3D story short (three.js + Remotion)
@@ -25,6 +25,13 @@ User rules that apply:
 - Opus max verifies every check.
 - Save after every step.
 - "Just do it" once the script is approved.
+
+## Engine choice
+- **Remotion (default)** for original story shorts: the bridge pipeline below.
+- **HyperFrames** when the person asks for it, and always for remakes. See "HyperFrames path" and "Remake mode" at the end.
+  - Why it bakes: HyperFrames' own headless capture renders this engine at ~40 s/frame and stalls on whip frames.
+  - So the three.js layer is rendered frame by frame in GPU Chrome (`bake.mjs`, 1–5 s/frame), mounted as a muted video, and captions, overlays and audio stay live HyperFrames clips.
+- **Remakes of someone else's clip** need the owner's permission, stated by the person. The result stays private. The "never copy shots/characters" rule above still holds for original shorts.
 
 ## Pipeline
 1. **Topic and facts.** Pick one surprising true story with a physical cause and effect (it should be visual), plus a simple everyday analogy that explains it.
@@ -164,3 +171,48 @@ lighting 5-6, ink 6, textures 5-6, characters 7, depth 6-7, composition 6-7 (fro
 - Golden rim light done as an offset outer copy turns every hat into a picture frame: inner rim only, head/torso only.
 - Balcony/railing rails at chest height through characters: put the lens ~2.5 m up so rails cross legs, not torsos.
 - Flat holds read as freezes in QA (frozen span ≥12 f): every hold needs a creeping push-in.
+
+## HyperFrames path (standalone three.js, baked)
+1. **Project.**
+   - Run `npx hyperframes init <dir>`.
+   - Copy in `templates/hyperframes/*` and `templates/pirates/src` → `engine/src`. For a new world, start from `pirates/src` and swap `world.ts`/`ships.ts`/`story.ts`; the look modules are shared. (`templates/pirates/` is kept on the author's PC only and isn't in the public repo; if it's missing, build the engine from the `templates/bridge` look modules).
+   - Copy `templates/scripts/{stills.sh,snap.sh,sbs.py,bake.mjs,short_qa.py}` → `tools/`.
+   - In `engine/`: `npm i three@0.169.0 postprocessing@6.36.4 esbuild@0.24.0 @types/three@0.169.0 typescript@5.6.3`.
+2. **Build.** `cd engine && npm run build` (esbuild IIFE → `assets/js/world.js`). The runtime draws from `hf-seek` time, and registers `window.__hf.buildReady`.
+3. **Look.** Serve the folder (`python -m http.server 8765`), then run `tools/stills.sh <name> <frames>` for reference | ours sheets from GPU stills. `tools/snap.sh` does the same through HyperFrames snapshots, including overlays.
+4. **Bake.**
+   - Run `node tools/bake.mjs <puppeteer-core dir in the npx cache> <chrome.exe>` (`--use-angle=d3d11`, headless:false, `maxsub=24`). It is incremental: delete PNGs to re-bake a range.
+   - Then `ffmpeg … -crf 10 -pix_fmt yuv420p assets/world3d.mp4`.
+5. **Composite.**
+   - `compositions/world3d.html` is the baked video; `world3d-live.html` is the live engine, for editing.
+   - Captions and pops are GSAP `set()` per frame at measured frames.
+6. **Render.** Run `npx hyperframes check`, stop any `hyperframes preview`, then `npx hyperframes render -o out/x.mp4 --quality delivery -w 2` (~2 min for 12 s). Then run `short_qa.py`.
+
+**Look values proven on the HyperFrames path** (`templates/pirates/src`):
+- Shading: two-tone `lambert 0`, `term 0.02`; `PCFShadowMap` (hard shadows); no bloom; flat cards (`charGrad 0`, `bodyGrad 0`).
+- Ink: #000, 6→3 px, drawn **after** the lens passes, so outlines stay sharp over a blurred background.
+- Resolution: 2× supersample (2160×3840, MSAA off) with a box downscale, plus an unsharp mask (0.6 / 1 px). The reference was sharpened.
+- Motion blur: averaged sub-frames, 180° shutter (full shutter on whips); sub-frame count from the measured screen motion at 10 m depth.
+- Character cards: texture density from projected size (≥1 texel per output px), with an LRU cache of 40 textures.
+
+## Remake mode (measure → solve → build → verify)
+Full method: `references/remake/METHOD.md`. Agent prompts: `references/remake/AGENT_BRIEFS.md`. Worked example (numbers + 10 gridded frames): `references/knox_example/`, kept on the author's PC only (third-party frames), so it may be missing here.
+1. `hyperframes measure cuts`, then **3 parallel measurement agents** (cuts/camera/motion; colour/grade/lighting; depth/texture/characters/ink/captions). Their reports go to `reference/reports/`.
+2. Gridded key frames → anchors → `templates/remake/fit_layout.py`: a least-squares fit of camera **plus** crew positions/scales **plus** horizon and waterlines. Target < 2 % of frame height.
+   - Within a shot, lock the crew from the first key (`prior: 50`).
+3. `emit_cams.py` writes `CAMS`/`ROLL`. Measured velocity profiles (trucks) are integrated and emitted **one key per frame**.
+4. Fix one area per round, with `apply_roundN.py` edit scripts that assert every search string.
+5. After each render, a **fresh Opus max verifier** scores 11 areas. A new verifier may score lower, so check its list for regressions you introduced before adding anything new.
+6. Bake, render, QA. Record scores and open items in the project's `REPORT.md`.
+
+## Gotchas from the pirates remake
+- **Prism walls must wind outward.** DoubleSide flips back-face normals, and inward-wound hulls rendered fully in shade.
+- **Character card plane anchored at the foot:** `translate(0, (footY − h/2)·SU, 0)`. The wrong sign put every pirate under the deck.
+- **Cards are children of set roots:** place them in set-local coordinates and pass the origin only for the yaw-to-camera. Adding it twice moved cards 3 km away.
+- **`InstancedMesh` needs `frustumCulled = false`.** Its bounds are the base box at the origin, so containers vanished.
+- **Motion-blur "ghosting"** means a camera step between keys (34 px/f at f59→61), not a blur bug. Check `camAt` across sub-frame times.
+- **The LensBlur EffectPass showed no effect** in a standalone postprocessing 6.36 composer (cInf 25 did nothing; it works under R3F/Remotion). Verify blur on a test frame. The rack focus was done as a display-space canvas blur matched on Laplacian variance (σ 1.2 → 0).
+- **Keep props on the hull.** Containers overhung a 34 m bow taper; use a blunt bow (12 m) and stacks up to the stem, as the reference draws them.
+- **Card-only measurements lie about the world:** derive ship freeboard and size from on-screen heights against the solved horizon.
+- **Stale `debug.html` bundles:** the page cache-busts `world.js`. A fresh puppeteer profile always loads the current build.
+- **Stop `hyperframes preview` and close debug tabs before render or bake** (GPU contention). `hyperframes reverse` needs Pro; on Free, do its steps by hand.
