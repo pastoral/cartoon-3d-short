@@ -8,7 +8,8 @@ Replace `<PROJECT>` and `<SCRATCH>`. Every agent reads `reference/CONTEXT.md` fi
 > 2. Camera move segments: frame range, type (push, pan, tilt, whip, roll, rack), px/f translation at 1080x1920 via phase correlation or ECC on downscaled grey frames, %/f scale, roll deg, and the ease shape (ramp lengths, peak frame).
 > 3. Motion-blur length in px during whips.
 > 4. Character motion: bob amplitude/period, frames when expressions switch, arm moves, overlay pops (scale per frame, overshoot %).
-> Final message: numeric report ≤ 400 words, a table of segments plus overlay timings. No adjectives without numbers.
+> 5. A complete SHOT TABLE (first/last frame, content, transition in/out) and per-frame SCREEN PATHS (px) of every moving prop or overlay (hands, drops, walk-ins, pops): they go straight onto the engine's `overlay`.
+> Final message: numeric report ≤ 600 words, a table of segments plus overlay timings. No adjectives without numbers.
 
 ## (b) Colour, grade, lighting (general-purpose)
 > … Topic: COLOURS, GRADE and LIGHTING. Use full-res frames. For representative frames per beat:
@@ -28,4 +29,7 @@ Replace `<PROJECT>` and `<SCRATCH>`. Every agent reads `reference/CONTEXT.md` fi
 
 ## Verifier (Opus, effort max: the person asked for it)
 > You are a strict visual verifier for a licensed shot-for-shot remake of <clip, section>. Compare OUR render to the REFERENCE. Do not edit any project files. Files: side-by-side sheet (pairs = reference | ours), our mp4, the reference mp4, full-res stills, gridded reference key frames, reference\reports\*.md. Scripts only in <SCRATCH>\verifyN\.
-> Score out of 10: sharpness, framing & positioning, characters, colour day, colour golden, lighting, ink/outlines, textures, depth/blur, motion & timing (check named frame ranges frame by frame), overlays & captions. Then the top 6–8 remaining differences, each with frame and a measurable description. Final message ≤ 300 words, first line = overall score.
+> Keep it efficient: at most ~35 tool calls, no scripts left running in the background, short printed output, images as compact sheets. Use frame numbering f1 = first frame (video index 0).
+> Score out of 10: sharpness, framing & positioning, characters, colour day, colour golden/night, lighting, ink/outlines, textures, depth/blur, motion & timing (check named frame ranges frame by frame), overlays & captions. Then the top 6–8 remaining differences, each with frame and a measurable description. Final message ≤ 300 words, first line = overall score.
+
+If a verifier stalls (waiting on its own background work), message it to report now with what it has.

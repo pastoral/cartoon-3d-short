@@ -1,6 +1,6 @@
 ---
 name: cartoon-3d-short
-description: Make a ~55-70 s vertical cartoon story short in the "2D characters in a colourful 3D world" style (flat bean-head cartoon cards with ink outlines, painted 3D town/world with black ink lines, saturated sky, depth-of-field backgrounds, gliding cameras, voice narration, synthesized SFX + march-style music), rendered with three.js inside Remotion (default) or HyperFrames (baked with GPU Chrome). Proven on "The Bridge That Fell for a Song" (2026-10-31) and on a licensed shot-for-shot remake, the pirates-vs-cruise opening (2026-11-22). Use when the user asks for another video "like the bridge video", "like the soldiers/bridge short", "in that cartoon 3D style", a history/science story short with cartoon characters in 3D, a HyperFrames version of this style, to remake or recreate an existing cartoon clip in this style (with the owner's permission), or says "use the cartoon short skill".
+description: Make a ~55-70 s vertical cartoon story short in the "2D characters in a colourful 3D world" style (flat bean-head cartoon cards with ink outlines, painted 3D town/world with black ink lines, saturated sky, depth-of-field backgrounds, gliding cameras, voice narration, synthesized SFX + march-style music), rendered with three.js inside Remotion (default) or HyperFrames (baked with GPU Chrome). Proven on "The Bridge That Fell for a Song" (2026-10-31) and on two licensed shot-for-shot remakes: the pirates-vs-cruise opening (12 s, 2026-11-22) and a 35 s, 1050-frame, 720x1280 village-and-barrels short (2026-11-24, generic remake engine in templates/remake/engine). Use when the user asks for another video "like the bridge video", "like the soldiers/bridge short", "in that cartoon 3D style", a history/science story short with cartoon characters in 3D, a HyperFrames version of this style, to remake or recreate an existing cartoon clip in this style (with the owner's permission), or says "use the cartoon short skill".
 ---
 
 # Cartoon 3D story short (three.js + Remotion)
@@ -174,19 +174,23 @@ lighting 5-6, ink 6, textures 5-6, characters 7, depth 6-7, composition 6-7 (fro
 
 ## HyperFrames path (standalone three.js, baked)
 1. **Project.**
-   - Run `npx hyperframes init <dir>`.
-   - Copy in `templates/hyperframes/*` and `templates/pirates/src` → `engine/src`. For a new world, start from `pirates/src` and swap `world.ts`/`ships.ts`/`story.ts`; the look modules are shared. (`templates/pirates/` is kept on the author's PC only and isn't in the public repo; if it's missing, build the engine from the `templates/bridge` look modules).
-   - Copy `templates/scripts/{stills.sh,snap.sh,sbs.py,bake.mjs,short_qa.py}` → `tools/`.
-   - In `engine/`: `npm i three@0.169.0 postprocessing@6.36.4 esbuild@0.24.0 @types/three@0.169.0 typescript@5.6.3`.
-2. **Build.** `cd engine && npm run build` (esbuild IIFE → `assets/js/world.js`). The runtime draws from `hf-seek` time, and registers `window.__hf.buildReady`.
-3. **Look.** Serve the folder (`python -m http.server 8765`), then run `tools/stills.sh <name> <frames>` for reference | ours sheets from GPU stills. `tools/snap.sh` does the same through HyperFrames snapshots, including overlays.
+   - Run `npx hyperframes init <dir>`. Make the root composition the **reference's native size** (e.g. 720x1280) so measured px apply 1:1.
+   - Copy `templates/hyperframes/*`, and `templates/remake/engine` → `engine/`. That is the generic engine: a shot list, a set registry, the card pool, overlays and measured crossfades (see its README). Then `cd engine && bash setup.sh <skill>/templates/bridge`: it copies the shared look modules and installs everything, including `puppeteer-core` for the bake.
+   - Set `OUT_W`/`OUT_H`/`FPS`/`DURATION` in `engine/src/story.ts`. Replace the example `cast.ts`, `sets.ts` and `shots.ts` with your own.
+   - Copy `templates/scripts/{extract_frames.sh,stills.sh,sbs_final.py,captions_from_table.py,bake.mjs,bake_all.sh,short_qa.py}` and `templates/remake/*.py` → `tools/`.
+   - `templates/pirates/` is the older sea-specific engine, kept on the author's PC only.
+2. **Build.** `cd engine && npm run build && npm run check` (esbuild IIFE → `assets/js/world.js`). The runtime draws from `hf-seek` time and registers `window.__hf.buildReady`.
+3. **Look.**
+   - Serve the folder on the project's **own port** (`python -m http.server 8766`; the tools read the `PORT` env). A stale server from another project on the same port silently shows that project's world.
+   - Then run `tools/stills.sh <name> <frames>` for reference | ours sheets from GPU stills (seconds per frame).
 4. **Bake.**
-   - Run `node tools/bake.mjs <puppeteer-core dir in the npx cache> <chrome.exe>` (`--use-angle=d3d11`, headless:false, `maxsub=24`). It is incremental: delete PNGs to re-bake a range.
-   - Then `ffmpeg … -crf 10 -pix_fmt yuv420p assets/world3d.mp4`.
+   - Run `tools/bake_all.sh <frames>`. It bakes every frame in GPU Chrome (`--use-angle=d3d11`, headless:false, `MAXSUB=12-24`), retries after a hang, and encodes `assets/world3d.mp4` (CRF 10). It is incremental: delete PNGs to re-bake a range.
+   - Keep the machine awake (request keep-awake) for bakes and renders. A sleeping laptop stalled Chrome once (protocol timeout at frame 420) and stalled the HyperFrames audio mix for 3 h.
 5. **Composite.**
    - `compositions/world3d.html` is the baked video; `world3d-live.html` is the live engine, for editing.
-   - Captions and pops are GSAP `set()` per frame at measured frames.
-6. **Render.** Run `npx hyperframes check`, stop any `hyperframes preview`, then `npx hyperframes render -o out/x.mp4 --quality delivery -w 2` (~2 min for 12 s). Then run `short_qa.py`.
+   - Captions: run `python -I tools/captions_from_table.py captions.txt compositions/captions.html --w 720 --h 1280 --duration 35 ...` on the measured switch table.
+   - Pops and moving overlays: use the engine's screen-space `overlay` (baked in) or GSAP `set()` per frame.
+6. **Render.** Run `npx hyperframes check`, stop any `hyperframes preview`, then `npx hyperframes render -o out/x.mp4 --quality delivery -w 2` (~2 min for 12 s, ~5 min for 35 s). Then run `short_qa.py` and `sbs_final.py` on the **render**.
 
 **Look values proven on the HyperFrames path** (`templates/pirates/src`):
 - Shading: two-tone `lambert 0`, `term 0.02`; `PCFShadowMap` (hard shadows); no bloom; flat cards (`charGrad 0`, `bodyGrad 0`).
@@ -202,8 +206,16 @@ Full method: `references/remake/METHOD.md`. Agent prompts: `references/remake/AG
    - Within a shot, lock the crew from the first key (`prior: 50`).
 3. `emit_cams.py` writes `CAMS`/`ROLL`. Measured velocity profiles (trucks) are integrated and emitted **one key per frame**.
 4. Fix one area per round, with `apply_roundN.py` edit scripts that assert every search string.
-5. After each render, a **fresh Opus max verifier** scores 11 areas. A new verifier may score lower, so check its list for regressions you introduced before adding anything new.
-6. Bake, render, QA. Record scores and open items in the project's `REPORT.md`.
+5. Put anything whose **screen path** was measured on the shot's `overlay`, at those px per frame: giant hands, a coin drop and bounce, a walk-in, a bulb or heart pop. It is faster and more exact than solving them in 3D.
+6. Derive **lenses from motion**, not only from framing.
+   - A push measured as a global scale (x2.5 at up to 11 %/f) is a zoom: animate fov together with the dolly.
+   - The whip-pan travel between neighbours gives the close-up lens: 950 px between heads 0.9 m apart means about 20°.
+   - This was the biggest motion-score gain of the second remake (4.5 → 6).
+7. After each render, run a **fresh Opus max verifier**; it scores 11 areas.
+   - A new verifier may score lower, so check its list for regressions you introduced before adding anything new.
+   - **Check its claims too.** One reported a one-frame offset across the whole timeline that was really a repeated first frame in the source.
+   - Run it on the final render, not before late fixes.
+8. Bake, render, QA. Record scores and open items in the project's `REPORT.md`.
 
 ## Gotchas from the pirates remake
 - **Prism walls must wind outward.** DoubleSide flips back-face normals, and inward-wound hulls rendered fully in shade.
@@ -216,3 +228,13 @@ Full method: `references/remake/METHOD.md`. Agent prompts: `references/remake/AG
 - **Card-only measurements lie about the world:** derive ship freeboard and size from on-screen heights against the solved horizon.
 - **Stale `debug.html` bundles:** the page cache-busts `world.js`. A fresh puppeteer profile always loads the current build.
 - **Stop `hyperframes preview` and close debug tabs before render or bake** (GPU contention). `hyperframes reverse` needs Pro; on Free, do its steps by hand.
+
+## Gotchas from the second remake (35 s, 1050 frames, 720x1280)
+- **Invisible characters.** A card material compiled without a map never picks one up later (three only recompiles on `needsUpdate`). Give every card a blank map at construction; `templates/remake/engine/src/world.ts` does this.
+- **Card roll pivots on the anchor (the foot).** A rolled tumbleweed card sank underground. Spin round props inside the drawing (`opts.t`).
+- **Never append `//` comments to a code line in an edit script.** It silently commented out the rest of the line, and the hen coop vanished from the ending. Use `/* */`, or put the comment on its own line.
+- **Nothing may pop into view.** QA flags a visibility switch. Hide an object that must appear later inside something that leaves first (fields inside the house row that lifts away).
+- **Frame numbering.** Extract with `tools/extract_frames.sh` and check the count: it re-encodes the cut, because a `-c copy` cut gave 1053 frames for 1050. A repeated first frame can be in the source itself, so check that before shifting a timeline.
+- **Don't depend on the npx cache.** Its puppeteer-core vanished between sessions. The engine now installs `puppeteer-core` itself, and `bake.mjs` resolves it from `engine/node_modules`.
+- **Many shots, many framings.** With 25+ framings, cameras were matched by iterating side-by-side stills (11 rounds) instead of `fit_layout.py`, and framing scored only 5-6. Solve shots with clear anchors (horizon, ground lines, known props) with fit_layout, and keep by-eye iteration for the rest.
+- **Verifier runs.** Cap the verifier's tool calls (~35) and forbid background scripts. The first verifier timed out, and the second waited on its own script until told to report.

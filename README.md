@@ -39,4 +39,14 @@ The code and docs are MIT (see `LICENSE`). The reference frames are included for
 - `templates/remake/`: `fit_layout.py` (camera + layout least-squares solve), `emit_cams.py`, `solve_cam.py`, example keys and results.
 - `templates/scripts/`: + `bake.mjs` (GPU Chrome bake), `stills.sh`, `snap.sh`, `sbs.py`.
 - `references/remake/`: the remake method and the agent briefs.
+
+## Added 2026-11-24: generic remake engine (second remake: 35 s, 1050 frames, 720x1280)
+- `templates/remake/engine/`: a generic shot-list engine for remakes (any output size, set registry, card pool,
+  screen-space overlays on measured paths, measured crossfade curves, display-space dim/blur). Ships with small
+  original example content; `setup.sh` copies the shared look modules from `templates/bridge`.
+- `templates/scripts/`: `bake.mjs` (own port, resolves puppeteer-core from the engine, `-` defaults), `bake_all.sh`
+  (retries + encode), `extract_frames.sh` (re-encoded cut + frame-count check), `captions_from_table.py`,
+  `sbs_final.py` (reference | render sheets), updated `stills.sh`.
+- SKILL.md / METHOD.md / AGENT_BRIEFS.md: lenses from measured motion, overlays for measured screen paths, verifier
+  caps and claim checks, and the new gotchas.
 - `references/knox_example/`: a worked example (numbers + 10 gridded key frames). Not published: it contains frames from a third-party video.

@@ -6,12 +6,12 @@ compositions/world3d.html     the baked three.js layer as a muted <video src="as
 compositions/world3d-live.html  the same engine live (seeks world.js on hf-seek). Editable in preview, but ~40 s/frame headless
 compositions/captions.html    one timed div per caption at measured switch frames (Montserrat 800, stroke + shadow)
 compositions/overlays.html    thought bubble / padlock / reticle: GSAP set() per frame with measured pop sequences, inner movers
-engine/                       package.json (esbuild build), tsconfig, debug.html (cache-busted). Put src from templates/pirates (author's PC only, not published) or your own world built on templates/bridge
+engine/                       use templates/remake/engine (generic remake engine, see its README); this folder's package.json/tsconfig/debug.html are the older pirates setup
 ```
 
 To adapt:
-1. Change the root `data-duration` and the audio `src` (the example used the remade clip's own audio, with permission).
-2. Regenerate the caption divs from your switch-frame table (a short Python loop is in the pirates project history).
+1. Change the root size to the reference's native size (`data-width`/`data-height`, the viewport meta, html/body css) and `data-duration`, and point the audio `src` at the remade clip's own audio (only with permission).
+2. Regenerate the caption divs from your switch-frame table: `templates/scripts/captions_from_table.py`.
 3. Reposition the overlays.
 
 Render with `npx hyperframes render -o out/x.mp4 --quality delivery -w 2`, after `npx hyperframes check` and with the preview stopped.
